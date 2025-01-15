@@ -316,6 +316,8 @@ class UA extends EventManager {
     // If there are session wait a bit so CANCEL/BYE can be sent and their responses received.
     int num_sessions = _sessions.length;
 
+    _stopping = true;
+
     // Run  _terminate_ on every Session.
     _sessions.forEach((String? key, _) {
       if (_sessions.containsKey(key)) {
@@ -343,8 +345,6 @@ class UA extends EventManager {
         }
       }
     });
-
-    _stopping = true;
 
     // Run  _close_ on every applicant.
     for (Applicant applicant in _applicants) {
@@ -548,6 +548,9 @@ class UA extends EventManager {
    * RTCSession destroyed.
    */
   void destroyRTCSession(RTCSession session) {
+    if (_stopping) {
+      return;
+    }
     _sessions.remove(session.id);
   }
 
